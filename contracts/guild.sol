@@ -1,6 +1,7 @@
 pragma solidity 0.8.7;
 
 import "./ERC721.sol";
+import "./ownable.sol";
 
 interface rarity {
     function summon(uint _class) external;
@@ -12,7 +13,7 @@ interface gold {
     function transferFrom(uint executor, uint from, uint to, uint amount) external returns (bool);
 }
 
-contract guild is IERC721Receiver {
+contract guild is IERC721Receiver, ownable, has_registry {
     uint256 public internal_erc721_id = 1;
     mapping(uint256 => uint256) public internal_id_to_erc721_id;
     mapping(uint256 => address) public erc721_parent_contract;
@@ -21,15 +22,17 @@ contract guild is IERC721Receiver {
 
     uint256 initial_guild_shares = 1000;
 
-    rarity public rm;
-    gold public gd;
-
-    constructor(address rarity_address, address gold_address) {
-        rm = rarity(rarity_address);
-        gd = gold(gold_address);
-        guild_treasury_summoner = rm.next_summoner();
-        rm.summon(1);
+    string private constant rarity_contract_name = "rarity";
+    function rm() internal view returns (rarity) {
+        return rarity(reg.register(rarity_contract_name));
     }
+
+    string private constant gold_contract_name = "gold";
+    function gd() internal view returns (gold) {
+        return gold(reg.register(gold_contract_name));
+    }
+
+    constructor(address registry_address) ownable() has_registry(registry_address) { }
 
     function onERC721Received(
         address operator,

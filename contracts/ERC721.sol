@@ -5,10 +5,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-interface IERC165 {
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-}
-
+import "./has_registry.sol";
 
 interface IERC721 is IERC165 {
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
