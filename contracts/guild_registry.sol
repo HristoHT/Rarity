@@ -1,7 +1,7 @@
 pragma solidity 0.8.7;
 
 contract guild_registry {
-    mapping(string => address) registry;
+    mapping(string => address) public register;
     address public owner;
 
     modifier onlyOwner() {
@@ -17,7 +17,7 @@ contract guild_registry {
         owner = new_owner;
     }
 
-    function regiister(string calldata name, address location) external onlyOwner {
-        registry[name] = location;
+    function update_register(string calldata name, address location) external onlyOwner {
+        register[name] = location;
     }
 }
