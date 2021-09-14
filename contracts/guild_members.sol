@@ -12,7 +12,7 @@ interface gold {
     function transferFrom(uint executor, uint from, uint to, uint amount) external returns (bool);
 }
 
-contract guild_members {
+contract guild_members is has_registry {
     mapping(uint256 => uint256) public guild_member_capacity;
     mapping(uint256 => uint256) public members_in_guild;
     mapping(uint256 => uint256) public guild_member;
@@ -20,16 +20,19 @@ contract guild_members {
     uint256 public default_guild_capacity = 5;
     uint256 public guild_treasury_summoner;
 
-    rarity public rm;
-    gold public gd;
+     string private constant rarity_contract_name = "rarity";
+    function rm() internal view returns (rarity) {
+        return rarity(reg.register(rarity_contract_name));
+    }
 
-    constructor(address rarity_address,
-                address gold_address,
-                address guild_address) {
-        rm = rarity(rarity_address);
-        gd = gold(gold_address);
-        guild_treasury_summoner = rm.next_summoner();
-        rm.summon(1);
+    string private constant gold_contract_name = "gold";
+    function gd() internal view returns (gold) {
+        return gold(reg.register(gold_contract_name));
+    }
+
+    constructor(address registry_address) has_registry(registry_address) {
+        guild_treasury_summoner = rm().next_summoner();
+        rm().summon(1);
     }
 
     function create_guild(uint256 guild_id, uint256 hero) external {
