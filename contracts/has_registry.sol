@@ -1,13 +1,14 @@
 pragma solidity 0.8.7;
 
 import "./IERC165.sol";
+import "./ownable.sol";
 
 interface registry is IERC165 {
     function register(string calldata contract_name) external view returns (address);
     function update_register(string calldata contract_name, address location) external;
 }
 
-contract has_registry {
+contract has_registry is ownable {
     registry public reg;
 
     modifier isRegistry(address registry_candidate) {
@@ -16,11 +17,11 @@ contract has_registry {
         _;
     }
 
-    constructor(address registry_address) {
+    constructor(address registry_address) ownable() {
         update_registry(registry_address);
     }
 
-    function update_registry(address new_registry_address) internal isRegistry(new_registry_address) {
+    function update_registry(address new_registry_address) public onlyOwner isRegistry(new_registry_address) {
         reg = registry(new_registry_address);
     }
 

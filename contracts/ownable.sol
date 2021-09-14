@@ -12,7 +12,7 @@ contract ownable {
         owner = msg.sender;
     }
 
-    function update_owner(address new_owner) internal {
+    function update_owner(address new_owner) public onlyOwner {
         owner = new_owner;
     }
 }

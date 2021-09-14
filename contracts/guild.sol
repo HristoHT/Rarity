@@ -13,7 +13,7 @@ interface gold {
     function transferFrom(uint executor, uint from, uint to, uint amount) external returns (bool);
 }
 
-contract guild is IERC721Receiver, ownable, has_registry {
+contract guild is IERC721Receiver, has_registry {
     uint256 public internal_erc721_id = 1;
     mapping(uint256 => uint256) public internal_id_to_erc721_id;
     mapping(uint256 => address) public erc721_parent_contract;
@@ -32,7 +32,7 @@ contract guild is IERC721Receiver, ownable, has_registry {
         return gold(reg.register(gold_contract_name));
     }
 
-    constructor(address registry_address) ownable() has_registry(registry_address) { }
+    constructor(address registry_address) has_registry(registry_address) { }
 
     function onERC721Received(
         address operator,
