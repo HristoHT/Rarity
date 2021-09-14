@@ -24,7 +24,7 @@ contract("guild", function ( accounts ) {
     console.log((await guildShareInstance.guild_treasury_summoner()).toNumber());
   });
 
-  it("should summon hero on initiliazation", async () => {
+  it("test constructor ", async () => {
     const rarityInstance = await rarity_c.deployed();
     const goldInstance = await rarity_gold.deployed();
     await rarityInstance.summon(1);
@@ -33,6 +33,10 @@ contract("guild", function ( accounts ) {
 
     const guildInstance = await guild.new(rarityInstance.address, goldInstance.address);
 
-    assert.equal((await guildInstance.guild_treasury_summoner()).toNumber(), 4);
+    const treasuryGuard = (await guildInstance.guild_treasury_summoner()).toNumber()
+    assert.equal(treasuryGuard, 4);
+    assert.equal((await guildInstance.rm()).toString(), rarityInstance.address);
+    assert.equal((await guildInstance.gd()).toString(), goldInstance.address);
+    assert.equal((await rarityInstance.class(treasuryGuard)).toNumber(), 1);
   });
 });

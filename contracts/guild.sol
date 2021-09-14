@@ -23,8 +23,8 @@ contract guild is IERC721Receiver {
 
     uint256 initial_guild_shares = 1000;
 
-    rarity private rm;
-    gold private gd;
+    rarity public rm;
+    gold public gd;
 
     constructor(address rarity_address, address gold_address) {
         rm = rarity(rarity_address);
