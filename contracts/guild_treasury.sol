@@ -12,12 +12,8 @@ interface gold {
     function transferFrom(uint executor, uint from, uint to, uint amount) external returns (bool);
 }
 
-contract guild_members is has_registry {
-    mapping(uint256 => uint256) public guild_member_capacity;
-    mapping(uint256 => uint256) public members_in_guild;
-    mapping(uint256 => uint256) public guild_member;
-    uint256 public guild_counter = 0;
-    uint256 public default_guild_capacity = 5;
+contract guild_treasury is has_registry {
+    mapping (uint256 => uint256) guilds_treasury;
     uint256 public guild_treasury_summoner;
 
     string private constant rarity_contract_name = "rarity";
@@ -25,7 +21,7 @@ contract guild_members is has_registry {
         return rarity(reg.register(rarity_contract_name));
     }
 
-    string private constant gold_contract_name = "gold";
+    string private constant gold_contract_name = "gold_dao";
     function gd() internal view returns (gold) {
         return gold(reg.register(gold_contract_name));
     }
@@ -35,10 +31,16 @@ contract guild_members is has_registry {
         rm().summon(1);
     }
 
-    function create_guild(uint256 guild_id, uint256 hero) external {
-        guild_member_capacity[guild_id] = default_guild_capacity;
-        guild_member[hero] = guild_id; 
-        members_in_guild[guild_id] += 1;
-        guild_counter += 1;
+    function depositToGuild(uint256 from, uint256 guild_id, uint256 amount) external returns(bool) {
+        require(gd().transfer(from, guild_treasury_summoner, amount), "guild_treasury: invalid transfer");
+        guilds_treasury[guild_id] += amount;
+        return true;
+    }
+
+    function widrawFromGuild(uint256 guild_id, uint256 to, uint256 amount) external returns(bool) {
+        require(amount <= guilds_treasury[guild_id], "guild_treasury: insufitient funds");
+        require(gd().transfer(guild_treasury_summoner, to, amount), "guild_treasury: invalid transfer");
+        guilds_treasury[guild_id] -= amount;
+        return true;
     }
 }
