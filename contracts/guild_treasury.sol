@@ -9,11 +9,10 @@ interface rarity {
 
 interface gold {
     function transfer(uint from, uint to, uint amount) external returns (bool);
-    function transferFrom(uint executor, uint from, uint to, uint amount) external returns (bool);
 }
 
 contract guild_treasury is has_registry {
-    mapping (uint256 => uint256) guilds_treasury;
+    mapping (uint256 => uint256) public guilds_treasury;
     uint256 public guild_treasury_summoner;
 
     string private constant rarity_contract_name = "rarity";
